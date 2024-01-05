@@ -1,15 +1,19 @@
 const http = require("http");
 const fs = require("fs");
+const url = require("url");
 
 const myServer = http.createServer((req, res) => {
+  if (req.url === "/favicon.ico") return res.end();
   const log = `${Date.now()}: "${req.url}" New req received \n`;
+  const myUrl = url.parse(req.url, true);
   fs.appendFile("log.txt", log, (err, data) => {
-    switch (req.url) {
+    switch (myUrl.pathname) {
       case "/":
         res.end("you are at homepage");
         break;
       case "/about":
-        res.end("i am genius");
+        const name = myUrl.query.im;
+        res.end(`Hello ${name}`);
         break;
       default:
         res.end("404 error");
